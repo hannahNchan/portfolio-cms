@@ -1,0 +1,47 @@
+.hannah-container {
+  height: 100vH;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: center;
+}
+
+body {
+  background-color: #f5f5f5;
+}
+
+#counter-list {
+  counter-reset: lists;
+}
+
+.hannah-addItem {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.hannah-list * {
+  margin: 0;
+  padding: 0;
+}
+
+.hannah-list p:first-of-type {
+  font-size: small;
+  font-family: sans-serif;
+  font-weight: 200;
+}
+
+.hannah-list p:first-of-type::before {
+  counter-increment: lists;
+  content: counter(lists)". "
+}
+
+.hannah-list ul > li:nth-child(odd) {
+  background-color: #f5f5f5;
+}
+
+.hannah-modal {
+  padding: 1rem;
+}
+
