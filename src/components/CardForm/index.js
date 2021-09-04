@@ -23,9 +23,11 @@ const CardForm = ({
   textItem,
   activities,
   description,
+  disabledForm,
   handleAddItem,
   onHandleDeleteItem,
   onHandleChangeText,
+  onHandleDateChange
 }) => {
 
   return (
@@ -33,13 +35,14 @@ const CardForm = ({
       <Grid container>
         <Grid item xs={12} md={6}>
           <TextField
-            id="standard-full-width"
             name="title"
-            label="Company name"
             value={title}
-            style={{ width: '85%' }}
             helperText=""
             margin="normal"
+            label="Company name"
+            disabled={!disabledForm}
+            id="standard-full-width"
+            style={{ width: '85%' }}
             InputLabelProps={{
               shrink: true,
             }}
@@ -47,7 +50,11 @@ const CardForm = ({
           />
         </Grid >
         <Grid item xs={12} md={6}>
-          <UIDatePicker timestamp={date} />
+          <UIDatePicker
+            selectDate={date}
+            disabled={!disabledForm}
+            handleDateChange={(e) => onHandleDateChange(e, index)}
+          />
         </Grid >
       </Grid >
       <Grid container>
@@ -60,6 +67,7 @@ const CardForm = ({
             style={{ alignSelf: 'flex-end', width: '85%' }}
             helperText=""
             fullWidth
+            disabled={!disabledForm}
             margin="normal"
             InputLabelProps={{
               shrink: true,
@@ -76,6 +84,7 @@ const CardForm = ({
             value={description}
             fullWidth
             rows={4}
+            disabled={!disabledForm}
             variant="outlined"
             onChange={(e) => onHandleChangeText(e, index)}
           />
@@ -89,6 +98,7 @@ const CardForm = ({
           <TextField
             id="standard-full-width"
             label="Position"
+            disabled={!disabledForm}
             style={{ width: '70%' }}
             helperText=""
             margin="normal"
@@ -102,6 +112,7 @@ const CardForm = ({
           <Button
             onClick={() => handleAddItem('activities',index)}
             variant="outlined"
+            disabled={!disabledForm}
             color="primary"
             className={classes.button}
             startIcon={<AddIcon/>}
@@ -117,8 +128,16 @@ const CardForm = ({
                   primary={<p>{item}</p>}
                 />
                 <ListItemSecondaryAction>
-                  <IconButton name="activities" onClick={() => onHandleDeleteItem('activities', idx, index)} edge="end" aria-label="delete">
-                    <DeleteIcon style={{ color: "#de4040" }} />
+                  <IconButton
+                    name="activities"
+                    onClick={() => onHandleDeleteItem('activities', idx, index)}
+                    edge="end"
+                    aria-label="delete"
+                    disabled={!disabledForm}
+                  >
+                    <DeleteIcon
+                      style={{ color: disabledForm ? "#de4040": "#949494" }}
+                    />
                   </IconButton>
                 </ListItemSecondaryAction>
               </ListItem>
@@ -135,13 +154,15 @@ CardForm.propTypes = {
   title: PropTypes.string,
   index: PropTypes.number,
   classes: PropTypes.object,
-  subtitle: PropTypes.string,
   textItem: PropTypes.array,
+  subtitle: PropTypes.string,
   activities: PropTypes.array,
   description: PropTypes.string,
   handleAddItem: PropTypes.func,
+  disabledForm: PropTypes.bool,
   onHandleDeleteItem: PropTypes.func,
-  onHandleChangeText: PropTypes.func
+  onHandleChangeText: PropTypes.func,
+  onHandleChangeDate: PropTypes.func
 };
 
 export default CardForm;

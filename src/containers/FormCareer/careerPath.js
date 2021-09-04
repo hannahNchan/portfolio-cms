@@ -1,9 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
+import Switch from '@material-ui/core/Switch';
+import FormGroup from '@material-ui/core/FormGroup';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import FormControl from '@material-ui/core/FormControl';
+import Button from '@material-ui/core/Button';
 
 import '../App.css';
+import { _POST } from '../../api';
 import CardForm from '../../components/CardForm';
+import ChipsArray from '../../components/ChipsArray';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -39,9 +46,15 @@ const CareerPath = ({ isModal = false, dataPath }) => {
   const [items, setItems] = useState([]);
   const classes = useStyles();
   const [path, setPath] = useState([]);
+  const [isDisabled, setIsDisabled] = useState([]);
 
   useEffect(() => {
     setPath(dataPath);
+    const clonedDisabled = [...isDisabled];
+    dataPath.map((_, index) => {
+      clonedDisabled[index] = false;
+    });
+    setIsDisabled([...clonedDisabled]);
   },[dataPath]);
 
   const onHandleChangeText = ({ target }, index) => {
@@ -55,6 +68,13 @@ const CareerPath = ({ isModal = false, dataPath }) => {
       setPath([...clonedArray]);
     }
   }
+
+  const onHandleDateChange = (date, index) => {
+    const convertToTimestamp = + new Date(date);
+    const clonedArray = [...path];
+    clonedArray[index].date = convertToTimestamp;
+    setTextItem([...clonedArray])
+  };
 
   const handleAddItem = (name, index) => {
     const clonedText = [...textItem];
@@ -73,6 +93,19 @@ const CareerPath = ({ isModal = false, dataPath }) => {
     setItems([...clonedArray]);
   }
 
+  const handleDisableCheck = (e, index) => {
+    const clonedDisabled = [...isDisabled];
+    clonedDisabled[index] = e.target.checked;
+    setIsDisabled([...clonedDisabled]);
+  };
+
+  const handleSaveChanges = async () => {
+    const id = isDisabled.indexOf(true);
+    const { date, content } = items[id];
+    const payload = { date, ...content, technologies: ['uno','dos','tres','cuatro'] };
+    const response = await _POST(payload, id);
+  };
+
   return (
     <>
       <Grid className={classes.pt3} container spacing={6}>
@@ -81,19 +114,46 @@ const CareerPath = ({ isModal = false, dataPath }) => {
           const { title, subtitle, description, activities, technologies } = content;
           return (
             <Grid className={classes.boxShadow1} item md={isModal ? 12 : 6} xs={12}>
+              <FormControl component="fieldset">
+                <FormGroup aria-label="position" row>
+                  <FormControlLabel
+                    value="start"
+                    control={<Switch color="primary" />}
+                    label="Edit this path"
+                    labelPlacement="start"
+                    onChange={(e) => handleDisableCheck(e, index)}
+                  />
+                </FormGroup>
+              </FormControl>
               <CardForm
                 date={date}
                 title={title}
                 index={index}
                 classes={classes}
-                subtitle={subtitle}
+                selectedDate={date}
                 textItem={textItem}
+                subtitle={subtitle}
                 activities={activities}
                 description={description}
                 handleAddItem={handleAddItem}
+                disabledForm={isDisabled[index]}
+                handleDateChange={onHandleDateChange}
                 onHandleDeleteItem={onHandleDeleteItem}
                 onHandleChangeText={onHandleChangeText}
+                onHandleDateChange={onHandleDateChange}
               />
+              <Grid item md={12}>
+                <Button
+                  disabled={!isDisabled[index]}
+                  variant="contained"
+                  color="primary"
+                  disableElevation
+                  onClick={handleSaveChanges}
+                >
+                  Save Changes
+                </Button>
+              </Grid>
+              <ChipsArray />
             </Grid>
           )
         })}

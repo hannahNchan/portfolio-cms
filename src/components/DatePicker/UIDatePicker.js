@@ -8,20 +8,14 @@ import {
   KeyboardDatePicker,
 } from '@material-ui/pickers';
 
-export default function UIDatePicker({ timestamp }) {
-  // The first commit of Material-UI
-  const [selectedDate, setSelectedDate] = React.useState(new Date(timestamp));
-
-  const handleDateChange = (date) => {
-    setSelectedDate(date);
-  };
-
+export default function UIDatePicker({ disabled, handleDateChange, selectedDate }) {
   return (
     <MuiPickersUtilsProvider utils={DateFnsUtils}>
       <KeyboardDatePicker
         margin="normal"
         id="date-picker-dialog"
-        label="Date picker dialog"
+        disabled={disabled}
+        label="Date"
         format="MM/dd/yyyy"
         value={selectedDate}
         onChange={handleDateChange}
