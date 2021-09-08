@@ -16,7 +16,12 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: 'column',
   },
   chip: {
+    '& svg': {
+      color: '#ce8584'
+    },
     margin: theme.spacing(0.5),
+    color: '#689ad0',
+    backgroundColor: '#bee1f5',
   },
   form: {
     display: 'flex',
@@ -42,78 +47,56 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-export default function ChipsArray() {
+const ChipsArray = ({
+  index,
+  disabled,
+  technologies,
+  textTechnology,
+  handleDeleteChips,
+  handleChangeChips,
+  addItemChips 
+}) => {
   const classes = useStyles();
-  const [chipData, setChipData] = useState([
-    { key: 0, label: 'Angular' },
-    { key: 1, label: 'jQuery' },
-    { key: 2, label: 'Polymer' },
-    { key: 3, label: 'React' },
-    { key: 4, label: 'Vue.js' },
-  ]);
-  const [text, setText] = useState('');
-
-  useEffect(() => {
-    //const clonedArray = [...chipData];
-    //clonedArray.push(dataArray);
-    //setChipData([...clonedArray]);
-  },[]);
-
-  const handleDelete = (chipToDelete) => () => {
-    setChipData((chips) => chips.filter((chip) => chip.key !== chipToDelete.key));
-  };
-
-  const addItem = () => {
-    const clonedArray = [...chipData];
-    clonedArray.push({ key: chipData.length + 1, label: text});
-    setChipData([...clonedArray]);
-  };
-
-  const handleChange = (e) => {
-    setText(e.target.value);
-  };
+  const disabledButton = disabled && typeof textTechnology[index] === 'undefined' || textTechnology[index] === '';
 
   return (
     <Paper component="div" className={classes.root}>
       <div className="hannah-addItem">
         <TextField
-          value={text}
+          value={textTechnology[index]}
           helperText=""
           margin="normal"
           name="activities"
+          disabled={disabled}
           InputLabelProps={{
             shrink: true,
           }}
           label="Add technology"
-          onChange={handleChange}
+          onChange={(e) => handleChangeChips(index, e)}
           id="standard-full-width"
           className={classes.field}
         />
         <Button
           color="primary"
-          onClick={addItem}
+          onClick={() => addItemChips(index)}
           variant="outlined"
           startIcon={<AddIcon/>}
-          disabled={text === ''}
+          disabled={disabledButton}
           className={classes.addButton}
         >
           Add Item
         </Button>
       </div>
       <div className={classes.chips}>
-        {chipData.map((data) => {
-          let icon;
-
-          if (data.label === 'React') {
-            icon = <TagFacesIcon />;
-          }
-
+        {technologies.map((data, idx) => {
+          let icon = <i class="devicon-react-original colored"></i>;
           return (
-            <li key={data.key}>
+            <li key={idx}>
               <Chip
+                disabled={disabled}
                 icon={icon}
-                label={data.label}
-                onDelete={data.label === 'React' ? undefined : handleDelete(data)}
+                label={data}
+                onDelete={handleDeleteChips({ key: idx, label: data }, index)}
                 className={classes.chip}
               />
             </li>
@@ -123,3 +106,6 @@ export default function ChipsArray() {
     </Paper>
   );
 }
+
+export default ChipsArray;
+

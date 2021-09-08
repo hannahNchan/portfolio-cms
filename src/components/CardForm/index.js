@@ -12,6 +12,7 @@ import IconButton from '@material-ui/core/IconButton';
 import ListItemText from '@material-ui/core/ListItemText';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 
+import ChipsArray from '../ChipsArray';
 import UIDatePicker from '../DatePicker/UIDatePicker';
 
 const CardForm = ({ 
@@ -19,15 +20,21 @@ const CardForm = ({
   title,
   index,
   classes,
+  isModal,
   subtitle,
   textItem,
   activities,
   description,
+  technologies,
   disabledForm,
   handleAddItem,
+  textTechnology,
+  onAddItemChips,
   onHandleDeleteItem,
   onHandleChangeText,
-  onHandleDateChange
+  onHandleDateChange,
+  onHandleDeleteChips,
+  onHandleChangeChips,
 }) => {
 
   return (
@@ -40,7 +47,7 @@ const CardForm = ({
             helperText=""
             margin="normal"
             label="Company name"
-            disabled={!disabledForm}
+            disabled={isModal ? false : !disabledForm}
             id="standard-full-width"
             style={{ width: '85%' }}
             InputLabelProps={{
@@ -52,7 +59,7 @@ const CardForm = ({
         <Grid item xs={12} md={6}>
           <UIDatePicker
             selectDate={date}
-            disabled={!disabledForm}
+            disabled={isModal ? false : !disabledForm}
             handleDateChange={(e) => onHandleDateChange(e, index)}
           />
         </Grid >
@@ -67,7 +74,7 @@ const CardForm = ({
             style={{ alignSelf: 'flex-end', width: '85%' }}
             helperText=""
             fullWidth
-            disabled={!disabledForm}
+            disabled={isModal ? false : !disabledForm}
             margin="normal"
             InputLabelProps={{
               shrink: true,
@@ -84,7 +91,7 @@ const CardForm = ({
             value={description}
             fullWidth
             rows={4}
-            disabled={!disabledForm}
+            disabled={isModal ? false : !disabledForm}
             variant="outlined"
             onChange={(e) => onHandleChangeText(e, index)}
           />
@@ -98,7 +105,7 @@ const CardForm = ({
           <TextField
             id="standard-full-width"
             label="Position"
-            disabled={!disabledForm}
+            disabled={isModal ? false : !disabledForm}
             style={{ width: '70%' }}
             helperText=""
             margin="normal"
@@ -112,7 +119,7 @@ const CardForm = ({
           <Button
             onClick={() => handleAddItem('activities',index)}
             variant="outlined"
-            disabled={!disabledForm}
+            disabled={isModal ? false : !disabledForm}
             color="primary"
             className={classes.button}
             startIcon={<AddIcon/>}
@@ -133,7 +140,7 @@ const CardForm = ({
                     onClick={() => onHandleDeleteItem('activities', idx, index)}
                     edge="end"
                     aria-label="delete"
-                    disabled={!disabledForm}
+                    disabled={isModal ? false : !disabledForm}
                   >
                     <DeleteIcon
                       style={{ color: disabledForm ? "#de4040": "#949494" }}
@@ -144,6 +151,15 @@ const CardForm = ({
             ))}
           </List>          
         </div>
+        <ChipsArray
+          index={index}
+          disabled={isModal ? false : !disabledForm}
+          technologies={technologies}
+          addItemChips={onAddItemChips}
+          textTechnology={textTechnology}
+          handleDeleteChips={onHandleDeleteChips}
+          handleChangeChips={onHandleChangeChips}
+        />
       </div>
     </>
   )
@@ -153,16 +169,22 @@ CardForm.propTypes = {
   date: PropTypes.number,
   title: PropTypes.string,
   index: PropTypes.number,
+  isModal: PropTypes.bool,
   classes: PropTypes.object,
   textItem: PropTypes.array,
   subtitle: PropTypes.string,
   activities: PropTypes.array,
+  disabledForm: PropTypes.bool,
+  technologies: PropTypes.array,
   description: PropTypes.string,
   handleAddItem: PropTypes.func,
-  disabledForm: PropTypes.bool,
+  onAddItemChips: PropTypes.func,
+  textTechnology: PropTypes.string,
   onHandleDeleteItem: PropTypes.func,
   onHandleChangeText: PropTypes.func,
-  onHandleChangeDate: PropTypes.func
+  onHandleChangeDate: PropTypes.func,
+  onHandleDeleteChips: PropTypes.func,
+  onHandleChangeChips: PropTypes.func,
 };
 
 export default CardForm;

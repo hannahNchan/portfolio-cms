@@ -8,9 +8,9 @@ import FormControl from '@material-ui/core/FormControl';
 import Button from '@material-ui/core/Button';
 
 import '../App.css';
-import { _POST } from '../../api';
+import { _POST, _DELETE } from '../../api';
 import CardForm from '../../components/CardForm';
-import ChipsArray from '../../components/ChipsArray';
+import SnackBar from '../../components/SnackBar';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -39,14 +39,21 @@ const useStyles = makeStyles((theme) => ({
   pt3: {
     marginTop: '3px',
   },
+  actionButtons: {
+    marginTop: '2rem'
+  }
 }));
 
-const CareerPath = ({ isModal = false, dataPath }) => {
+const CareerPath = ({ isModal = false, dataPath, fetchAPI }) => {
   const [textItem, setTextItem] = useState([]);
   const [items, setItems] = useState([]);
   const classes = useStyles();
   const [path, setPath] = useState([]);
   const [isDisabled, setIsDisabled] = useState([]);
+  const [textTechnology, setTextTechnology] = useState([]);
+  const [alert, setAlert] = useState({
+    type: '', message: '', open: false
+  });
 
   useEffect(() => {
     setPath(dataPath);
@@ -56,6 +63,30 @@ const CareerPath = ({ isModal = false, dataPath }) => {
     });
     setIsDisabled([...clonedDisabled]);
   },[dataPath]);
+
+  const onHandleDeleteChips = (chipToDelete, index) => () => {
+    const clonedArray = [...path];
+    const chipsCloned = clonedArray[index].content.technologies; 
+    const finalChips = chipsCloned.filter((_, idx) => idx !== chipToDelete.key);
+    clonedArray[index].content.technologies = [...finalChips];
+    setPath([...clonedArray]);
+  };
+
+  const onHandleChangeChips = (index, e) => {
+    const clonedArray = [...textTechnology];
+    clonedArray[index] = e.target.value;
+    setTextTechnology([...clonedArray]);
+  };
+
+  const onAddItemChips = (index) => {
+    const clonedText = [...textTechnology];
+    clonedText[index] = '';
+    setTextTechnology([...clonedText]);
+    const clonedArray = [...path];
+    const technologiesLength = clonedArray[index].content.technologies.length;
+    clonedArray[index].content.technologies.push(textTechnology[index]);
+    setPath([...clonedArray]);
+  };
 
   const onHandleChangeText = ({ target }, index) => {
     if (target.name === 'activities') {
@@ -99,11 +130,34 @@ const CareerPath = ({ isModal = false, dataPath }) => {
     setIsDisabled([...clonedDisabled]);
   };
 
+  const handleDeleteItem = async () => {
+    const id = isDisabled.indexOf(true);
+    const response = await _DELETE(id);
+    if (response.status === 'ok') {
+      setAlert({
+        ...alert,
+        open: true,
+        type: 'success',
+        message: response.payload.message
+      })
+      fetchAPI();
+    }
+  };
+
   const handleSaveChanges = async () => {
     const id = isDisabled.indexOf(true);
     const { date, content } = items[id];
-    const payload = { date, ...content, technologies: ['uno','dos','tres','cuatro'] };
+    const payload = { date, ...content };
     const response = await _POST(payload, id);
+    if (response.status === 'ok') {
+      setAlert({
+        ...alert,
+        open: true,
+        type: 'success',
+        message: response.payload.message
+      })
+      fetchAPI();
+    }
   };
 
   return (
@@ -114,49 +168,81 @@ const CareerPath = ({ isModal = false, dataPath }) => {
           const { title, subtitle, description, activities, technologies } = content;
           return (
             <Grid className={classes.boxShadow1} item md={isModal ? 12 : 6} xs={12}>
-              <FormControl component="fieldset">
-                <FormGroup aria-label="position" row>
-                  <FormControlLabel
-                    value="start"
-                    control={<Switch color="primary" />}
-                    label="Edit this path"
-                    labelPlacement="start"
-                    onChange={(e) => handleDisableCheck(e, index)}
-                  />
-                </FormGroup>
-              </FormControl>
+              {!isModal && (
+                <FormControl component="fieldset">
+                  <FormGroup aria-label="position" row>
+                    <FormControlLabel
+                      value="start"
+                      control={<Switch color="primary" />}
+                      label="Edit this path"
+                      labelPlacement="start"
+                      onChange={(e) => handleDisableCheck(e, index)}
+                    />
+                  </FormGroup>
+                </FormControl>
+              )}
               <CardForm
                 date={date}
                 title={title}
                 index={index}
+                isModal={isModal}
                 classes={classes}
                 selectedDate={date}
                 textItem={textItem}
                 subtitle={subtitle}
                 activities={activities}
                 description={description}
+                technologies={technologies}
                 handleAddItem={handleAddItem}
+                onAddItemChips={onAddItemChips}
+                textTechnology={textTechnology}
                 disabledForm={isDisabled[index]}
                 handleDateChange={onHandleDateChange}
                 onHandleDeleteItem={onHandleDeleteItem}
                 onHandleChangeText={onHandleChangeText}
                 onHandleDateChange={onHandleDateChange}
+                onHandleDeleteChips={onHandleDeleteChips}
+                onHandleChangeChips={onHandleChangeChips}
               />
-              <Grid item md={12}>
-                <Button
-                  disabled={!isDisabled[index]}
-                  variant="contained"
-                  color="primary"
-                  disableElevation
-                  onClick={handleSaveChanges}
+              {!isModal && (
+                <Grid
+                  md={12}
+                  container
+                  spacing={5}
+                  direction="row"
+                  justify="flex-end"
+                  alignItems="center"
+                  className={classes.actionButtons}
                 >
-                  Save Changes
-                </Button>
-              </Grid>
-              <ChipsArray />
+                  <Button
+                    disabled={!isDisabled[index]}
+                    variant="contained"
+                    color="secondary"
+                    disableElevation
+                    onClick={handleDeleteItem}
+                  >
+                    Delete element
+                  </Button>
+                  <Button
+                    style={{ marginLeft: '2rem' }}
+                    disabled={!isDisabled[index]}
+                    variant="contained"
+                    color="primary"
+                    disableElevation
+                    onClick={handleSaveChanges}
+                  >
+                    Save Changes
+                  </Button>
+                </Grid>
+              )}
             </Grid>
           )
         })}
+        <SnackBar 
+          open={alert.open}
+          severity={alert.type}
+          message={alert.message}
+        />
       </Grid >
     </>
   )
