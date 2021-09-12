@@ -4,7 +4,7 @@ import Button from '@material-ui/core/Button';
 import CareerPath from './careerPath';
 import Modal from '../../components/Modal';
 import SnackBar from '../../components/SnackBar';
-import {_POST_CREATE_NEW} from '../../api';
+import {_GET, _POST_CREATE_NEW} from '../../api';
 
 const CareerItemsPath = () => {
   const [path, setPath] = useState([]);
@@ -74,8 +74,7 @@ const CareerItemsPath = () => {
   },[])
 
   const fetchAPI = () => {
-    fetch('http://localhost:8000/career')
-      .then(response => response.json())
+    _GET('career')
       .then(({ payload }) => {
         setPath(payload.map(i => {
           return {

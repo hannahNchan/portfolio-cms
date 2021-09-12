@@ -2,7 +2,13 @@ const api =
   process.env.NODE_ENV === "development"
     ? process.env.REACT_APP_API_ENDPOINT_DEV
     : process.env.REACT_APP_API_ENDPOINT_PROD;
-console.log(api);
+
+export const _GET = async (section) => {
+  const formedURL = `${api}/${section}`;
+  const response = await fetch(formedURL);
+  return await response.json();
+};
+
 export const _POST = async (payload, id) => {
   const formedURL = `${api}/set-career/v1/${id}`;
   const options = {
