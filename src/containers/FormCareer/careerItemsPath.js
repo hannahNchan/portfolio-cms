@@ -6,6 +6,9 @@ import Modal from '../../components/Modal';
 import SnackBar from '../../components/SnackBar';
 import {_GET, _POST_CREATE_NEW} from '../../api';
 
+import '../App.css';
+import EMPTY_IMG from '../../assets/img/empty.svg';
+
 const CareerItemsPath = () => {
   const [path, setPath] = useState([]);
   const [open, setOpen] = useState(false);
@@ -94,7 +97,14 @@ const CareerItemsPath = () => {
       <Button style={{ marginBottom: '1rem' }} onClick={onHandleClickOpen} variant="outlined" color="primary">
         Add new Job
       </Button>
-      <CareerPath dataPath={path} fetchAPI={fetchAPI}/>
+      {path.length !== 0 && (
+        <CareerPath dataPath={path} fetchAPI={fetchAPI}/>
+      ) || (
+        <div className="hannah-centerContainer">
+          <p className="hannah-errorTableEmptyText" >You don't have path career yet, add one in <strong>ADD New Job</strong> button</p>
+          <img src={EMPTY_IMG} alt="Empty table" className="hannah-responsiveImage" />
+        </div>
+      )}
       <Modal
         title="Add new Job"
         handleSave={onHandleSave}

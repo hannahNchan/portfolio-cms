@@ -1,13 +1,35 @@
+* {
+  font-family: 'Poppins', sans-serif;
+}
+
+body {
+  background-color: #f5f5f5;
+}
+
+.hannah-centerContainer{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.hannah-errorTableEmptyText {
+  font-size: 40px;
+  font-weight: 300;
+  color: cornflowerblue;
+}
+
+.hannah-responsiveImage {
+  width: 35%;
+  height: auto;
+}
+
 .hannah-container {
   height: 100vH;
   display: flex;
   align-items: center;
   flex-direction: column;
   justify-content: center;
-}
-
-body {
-  background-color: #f5f5f5;
 }
 
 #counter-list {

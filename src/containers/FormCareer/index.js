@@ -23,7 +23,7 @@ const contentItems = [
 const FormCareer = () => {
   const classes = useStyles();
   return (
-    <Paper className={classes.paper}>
+    <Paper className={`container-general ${classes.paper}`}>
       <MenuSidebar lateralMenu={menuItems} contentMenu={contentItems} />
     </Paper>
   )

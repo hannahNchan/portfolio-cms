@@ -58,7 +58,7 @@ const CardForm = ({
         </Grid >
         <Grid item xs={12} md={6}>
           <UIDatePicker
-            selectDate={date}
+            value={date}
             disabled={isModal ? false : !disabledForm}
             handleDateChange={(e) => onHandleDateChange(e, index)}
           />
@@ -68,7 +68,7 @@ const CardForm = ({
         <Grid item xs={12} md={6}>
           <TextField
             id="standard-full-width"
-            label="Position"
+            label="Position job"
             name="subtitle"
             value={subtitle}
             style={{ alignSelf: 'flex-end', width: '85%' }}
@@ -104,7 +104,7 @@ const CardForm = ({
         <div className="hannah-addItem">
           <TextField
             id="standard-full-width"
-            label="Position"
+            label="Actvities"
             disabled={isModal ? false : !disabledForm}
             style={{ width: '70%' }}
             helperText=""
